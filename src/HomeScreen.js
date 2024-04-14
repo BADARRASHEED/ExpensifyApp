@@ -14,11 +14,11 @@ const HomeScreen = ({navigation}) => {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate('TripExpense', {...item})}
-        className="bg-white p-3 rounded-2xl mb-3 shadow-sm">
+        className="bg-white p-1 rounded-2xl mb-3 shadow-sm">
         <View>
           <Image source={randomImage()} className="w-36 h-36 mb-2" />
-          <Text className={`${colors.heading} font-bold`}>{item.place}</Text>
-          <Text className={`${colors.heading} text-xs`}>{item.country}</Text>
+          <Text className={`${colors.heading} font-bold text-center`}>{item.place}</Text>
+          <Text className={`${colors.heading} text-xs text-center`}>{item.country}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -93,7 +93,7 @@ const HomeScreen = ({navigation}) => {
             renderItem={renderItem}
             numColumns={2}
             columnWrapperStyle={{
-              justifyContent: 'space-between',
+              justifyContent: 'space-around',
             }}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<EmptyList message={'No trips till now'} />}
