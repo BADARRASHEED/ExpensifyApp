@@ -12,17 +12,38 @@ import React, {useState} from 'react';
 import {colors} from '../theme';
 import BackButton from '../components/BackButton';
 import {categories} from '../constants';
+import Snackbar from 'react-native-snackbar';
+import {set} from 'firebase/database';
+import {addDoc} from 'firebase/firestore';
+import {expenseRef} from '../config/firebase';
+import LoadingComponent from '../components/LoadingComponent';
 
-const AddTripScreen = ({navigation}) => {
+const AddTripScreen = ({navigation, route}) => {
+  let {id} = route.params;
   const [title, setTitle] = useState();
   const [amount, setAmount] = useState();
   const [category, setCategory] = useState();
+  const [loading, setLoading] = useState(false);
 
-  const handleAddExpense = () => {
+  const handleAddExpense = async () => {
     if (title && amount && category) {
-      navigation.goBack();
+      // navigation.goBack();
+      setLoading(true);
+      let doc = await addDoc(expenseRef, {
+        title,
+        amount,
+        category,
+        tripId: id,
+      });
+      setLoading(false);
+      if (doc && doc.id) {
+        navigation.goBack();
+      }
     } else {
-      // navigation.navigate('AddTrip');
+      Snackbar.show({
+        text: 'Please fill all the fields',
+        backgroundColor: 'red',
+      });
     }
   };
   return (
@@ -84,14 +105,18 @@ const AddTripScreen = ({navigation}) => {
             </View>
           </View>
           <View>
-            <TouchableOpacity
-              onPress={() => handleAddExpense()}
-              style={{backgroundColor: colors.button}}
-              className="my-6 rounded-full p-3 shadow-sm mx-2">
-              <Text className="text-center text-white text-lg font-bold">
-                Add Expense
-              </Text>
-            </TouchableOpacity>
+            {loading ? (
+              <LoadingComponent />
+            ) : (
+              <TouchableOpacity
+                onPress={() => handleAddExpense()}
+                style={{backgroundColor: colors.button}}
+                className="my-6 rounded-full p-3 shadow-sm mx-2">
+                <Text className="text-center text-white text-lg font-bold">
+                  Add Expense
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </ScrollView>

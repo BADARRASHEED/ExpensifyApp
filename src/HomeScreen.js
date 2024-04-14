@@ -1,41 +1,13 @@
 import {View, Text, TouchableOpacity, Image, FlatList} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {colors} from '../theme';
 import randomImage from '../assets/images/randomImage';
 import EmptyList from '../components/EmptyList';
-
-const Data = [
-  {
-    id: 1,
-    place: 'Gujranwala',
-    country: 'Pakistan',
-  },
-  {
-    id: 2,
-    place: 'Lahore',
-    country: 'Pakistan',
-  },
-  {
-    id: 3,
-    place: 'Islamabad',
-    country: 'Pakistan',
-  },
-  {
-    id: 4,
-    place: 'California',
-    country: 'USA',
-  },
-  {
-    id: 5,
-    place: 'Texas',
-    country: 'USA',
-  },
-  {
-    id: 6,
-    place: 'Paris',
-    country: 'France',
-  },
-];
+import {signOut} from 'firebase/auth';
+import {auth, tripRef} from '../config/firebase';
+import {useSelector} from 'react-redux';
+import {getDocs, query, where} from 'firebase/firestore';
+import {useIsFocused} from '@react-navigation/native';
 
 const HomeScreen = ({navigation}) => {
   const renderItem = ({item}) => {
@@ -52,6 +24,32 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
+  const {user} = useSelector(state => state.user);
+
+  const [trips, setTrips] = useState([]);
+  const isFocused = useIsFocused();
+
+  const fetchTrips = async () => {
+    const q = query(tripRef, where('userId', '==', user.uid));
+    const querySnapshot = await getDocs(q);
+    let data = [];
+    querySnapshot.forEach(doc => {
+      console.log('document: ', doc.data());
+      data.push({...doc.data(), id: doc.id});
+    });
+    setTrips(data);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchTrips();
+    }
+  }, [isFocused]);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
   return (
     <View className="flex-1">
       {/* Header Start */}
@@ -59,7 +57,9 @@ const HomeScreen = ({navigation}) => {
         <Text className={`${colors.heading} font-bold text-3xl shadow-sm`}>
           Expensify
         </Text>
-        <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
+        <TouchableOpacity
+          onPress={handleLogout}
+          className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text className={colors.heading}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -86,9 +86,9 @@ const HomeScreen = ({navigation}) => {
             <Text className={colors.heading}>Add Trip</Text>
           </TouchableOpacity>
         </View>
-        <View style={{height: 400}}>
+        <View style={{height: 430}}>
           <FlatList
-            data={Data}
+            data={trips}
             keyExtractor={item => item.id}
             renderItem={renderItem}
             numColumns={2}

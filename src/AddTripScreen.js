@@ -11,17 +11,37 @@ import {
 import React, {useState} from 'react';
 import {colors} from '../theme';
 import BackButton from '../components/BackButton';
-import randomImage from '../assets/images/randomImage';
+import LoadingComponent from '../components/LoadingComponent';
+import Snackbar from 'react-native-snackbar';
+import {addDoc} from 'firebase/firestore';
+import {tripRef} from '../config/firebase';
+import {useSelector} from 'react-redux';
 
 const AddTripScreen = ({navigation}) => {
   const [place, setPlace] = useState();
   const [country, setCountry] = useState();
+  const [loading, setLoading] = useState(false);
+  const {user} = useSelector(state => state.user);
 
-  const handleAddTrip = () => {
+  const handleAddTrip = async () => {
     if (place && country) {
-      navigation.navigate('Home');
+      setLoading(true);
+      let doc = await addDoc(tripRef, {
+        place,
+        country,
+        userId: user.uid,
+      });
+
+      setLoading(false);
+
+      if (doc && doc.id) {
+        navigation.goBack();
+      }
     } else {
-      // navigation.navigate('AddTrip');
+      Snackbar.show({
+        text: 'Place and Country are required',
+        backgroundColor: 'red',
+      });
     }
   };
   return (
@@ -41,7 +61,10 @@ const AddTripScreen = ({navigation}) => {
             </View>
 
             <View className="flex-row justify-center my-3 mt-5">
-              <Image source={randomImage()} className="w-72 h-72 mb-2" />
+              <Image
+                source={require('../assets/images/4.png')}
+                className="w-72 h-72 mb-2"
+              />
             </View>
             <View className="space-y-2 mx-2">
               <Text className={`${colors.heading} text-lg font-bold`}>
@@ -63,14 +86,18 @@ const AddTripScreen = ({navigation}) => {
             </View>
           </View>
           <View>
-            <TouchableOpacity
-              onPress={() => handleAddTrip()}
-              style={{backgroundColor: colors.button}}
-              className="my-6 rounded-full p-3 shadow-sm mx-2">
-              <Text className="text-center text-white text-lg font-bold">
-                Add Trip
-              </Text>
-            </TouchableOpacity>
+            {loading ? (
+              <LoadingComponent />
+            ) : (
+              <TouchableOpacity
+                onPress={() => handleAddTrip()}
+                style={{backgroundColor: colors.button}}
+                className="my-6 rounded-full p-3 shadow-sm mx-2">
+                <Text className="text-center text-white text-lg font-bold">
+                  Add Trip
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </ScrollView>
