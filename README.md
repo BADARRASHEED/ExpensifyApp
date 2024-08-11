@@ -1,0 +1,3 @@
+# Expensify - App 
+
+## - Team Miracle 😊 

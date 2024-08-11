@@ -1,0 +1,11 @@
+{
+  "name": "ExpensifyApp",
+  "displayName": "ExpensifyApp",
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "f46fc2ca-cf2c-41b5-a514-66ffc39a63a0"
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "248428209561",
+    "firebase_url": "https://expensify-b1b5a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "expensify-b1b5a",
+    "storage_bucket": "expensify-b1b5a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248428209561:android:2eb57c6f40ccb3327a9f08",
+        "android_client_info": {
+          "package_name": "com.expensifyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF7OA_WWGpO5WdOaYTgW4MLeejiryfyRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
