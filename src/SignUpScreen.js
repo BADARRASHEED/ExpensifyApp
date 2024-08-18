@@ -85,10 +85,6 @@ const SignUpScreen = ({navigation}) => {
                 secureTextEntry
                 className="p-4 bg-white mb-3 rounded-full"
               />
-              <TouchableOpacity
-                className={`${colors.button} flex-row justify-end`}>
-                <Text>Forgot Password?</Text>
-              </TouchableOpacity>
             </View>
           </View>
           <View>

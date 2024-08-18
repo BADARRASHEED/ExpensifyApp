@@ -19,14 +19,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setUserLoading} from '../redux/slices/user';
 
 const SignInScreen = ({navigation}) => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const {userLoading} = useSelector(state => state.user);
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     if (email && password) {
-      // navigation.navigate('Home');
       try {
         dispatch(setUserLoading(true));
         await signInWithEmailAndPassword(auth, email, password);
@@ -45,6 +44,52 @@ const SignInScreen = ({navigation}) => {
       });
     }
   };
+
+  const handleForgotPassword = async () => {
+    if (email) {
+      try {
+        const apiKey = 'AIzaSyBbMhe812iUZGF91thV_wtbhFnjHPFmF48';
+        const url = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`;
+        const data = {
+          requestType: 'PASSWORD_RESET',
+          email: email,
+        };
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          Snackbar.show({
+            text: 'Password reset email sent!',
+            backgroundColor: 'green',
+          });
+        } else {
+          Snackbar.show({
+            text: result.error.message || 'Error sending password reset email!',
+            backgroundColor: 'red',
+          });
+        }
+      } catch (error) {
+        Snackbar.show({
+          text: 'Error sending password reset email!',
+          backgroundColor: 'red',
+        });
+      }
+    } else {
+      Snackbar.show({
+        text: 'Please enter your email!',
+        backgroundColor: 'red',
+      });
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'android' ? 'padding' : 'height'}>
@@ -86,6 +131,7 @@ const SignInScreen = ({navigation}) => {
                 className="p-4 bg-white mb-3 rounded-full"
               />
               <TouchableOpacity
+                onPress={handleForgotPassword}
                 className={`${colors.button} flex-row justify-end`}>
                 <Text>Forgot Password?</Text>
               </TouchableOpacity>
