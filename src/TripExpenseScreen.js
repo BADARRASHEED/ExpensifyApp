@@ -13,7 +13,7 @@ const TripExpenseScreen = ({navigation, route}) => {
   const [expenses, setExpenses] = useState([]);
 
   const renderItem = ({item}) => {
-    return <ExpenseCard item={item} />;
+    return <ExpenseCard item={item} onDelete={handleDelete} />;
   };
 
   const isFocused = useIsFocused();
@@ -23,10 +23,13 @@ const TripExpenseScreen = ({navigation, route}) => {
     const querySnapshot = await getDocs(q);
     let data = [];
     querySnapshot.forEach(doc => {
-      console.log('document: ', doc.data());
       data.push({...doc.data(), id: doc.id});
     });
     setExpenses(data);
+  };
+
+  const handleDelete = deletedId => {
+    setExpenses(expenses.filter(expense => expense.id !== deletedId));
   };
 
   useEffect(() => {
